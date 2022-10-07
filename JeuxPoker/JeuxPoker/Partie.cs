@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,57 +41,123 @@ namespace JeuxPoker
 
         public void JouerTour()
         {
-            for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 5; j++)
             {
-                if (joueur[i].actif)
+                AfficherCarte(leTour);
+                //rotation de table
+                for (int i = 0; i < 4; i++)
                 {
-                    AfficherJeu();
-                    //[1:Coucher][2:check][3:call][4:Raise][5:miser]
-                    int mode = SelectionDansMenu(1, 5);
-                    int retour = 0;
-                    do
+                    if (joueur[i].actif)
                     {
-                        switch (mode)
+                        AfficherJeu();
+                        //[1:Coucher][2:check][3:call][4:Raise][5:miser]
+                        int mode = SelectionDansMenu(1, 5);
+                        bool retour = true;
+                        //selecteur et verif du choix
+                        do
                         {
-                            case 1:
-                                joueur[i].coucher();
-                                break;
-                            case 2:
-                                joueur[i].Check();
-                                break;
-                            case 3:
-                                if (miseParJoueur!=0)
-                                {
-                                    joueur[i].call(miseParJoueur);
-                                }
-                                else
-                                {
-                                    Console.WriteLine("choisissez un autre option");
-                                    Console.ReadKey();
-                                }
-      
-                                break;
-                            case 4:
-                                joueur[i].coucher();
-                                break;
-                            case 5:
-                                joueur[i].coucher();
-                                break;
+                            switch (mode)
+                            {
+                                case 1:
+                                    joueur[i].coucher();
+                                    break;
+                                case 2:
+                                    joueur[i].Check();
+                                    break;
+                                case 3:
+                                    if (miseParJoueur != 0)
+                                    {
+                                        pot = pot + joueur[i].call(miseParJoueur);
+                                    }
+                                    else
+                                    {
+                                        retour = false;
+                                        Console.WriteLine("option invalide Mise est de 0");
+                                        Console.ReadKey();
+                                    }
+
+                                    break;
+                                case 4:
+                                    if (miseParJoueur != 0)
+                                    {
+                                        Console.WriteLine("combien Voulez vous misé ?");
+                                        bool verif = true;
+
+                                        int montantRaiser;
+                                        do
+                                        {
+                                            verif = int.TryParse(Console.ReadLine(), out montantRaiser);
+                                            if (!verif)
+                                            {
+                                                Console.WriteLine("montant invalide");
+                                            }
+                                        } while (!verif);
+                                        if (!(montantRaiser > joueur[i].argent))
+                                        {
+                                            pot = pot + joueur[i].Raise(miseParJoueur, montantRaiser);
+                                        }
+                                        else
+                                        {
+                                            retour = false;
+                                            Console.WriteLine("montant trop haut pour votre total");
+                                            Console.ReadKey();
+                                        }
+
+
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("veuiller choisir miser, aucune mise est créer");
+                                        retour = false;
+                                    }
+
+
+                                    break;
+                                case 5:
+                                    Console.WriteLine("combien Voulez vous misé ?");
+                                    bool verif1 = true;
+
+                                    int montantMiser;
+                                    do
+                                    {
+                                        verif1 = int.TryParse(Console.ReadLine(), out montantMiser);
+                                        if (!verif1)
+                                        {
+                                            Console.WriteLine("montant invalide");
+                                        }
+                                    } while (!verif1);
+                                    if (!(montantMiser > joueur[i].argent))
+                                    {
+                                        pot = pot + joueur[i].miser(montantMiser);
+                                    }
+                                    else
+                                    {
+                                        retour = false;
+                                        Console.WriteLine("montant trop haut pour votre total");
+                                        Console.ReadKey();
+                                    }
+                                    break;
 
 
 
-                            default:
-                                break;
-                        }
-                    } while (retour == -1);
-
+                                default:
+                                    break;
+                            }
+                        } while (!retour);
+                    }
                 }
 
             }
+            
+
         }
         private void AfficherJeu()
         {
 
+        }
+        public int getGagnant()
+        {
+            return 1;
         }
         private void UpdaterGagnant(Joueur joueurUp)
         { 
