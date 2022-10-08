@@ -25,16 +25,18 @@ namespace JeuxPoker
             this.actif = true;
             maMain = new MainJoueur();
         }
-        public int miser(int montantMiser)
+        public bool miser(int montantMiser, out int mise)
         {
             if (argent >= montantMiser)
             {
                 argent = argent - montantMiser;
-                return montantMiser;
+                mise = montantMiser;
+                return true;
             }
             else
             {
-                return -1;
+                mise = -1;
+                return false;
             }
 
         }
@@ -43,17 +45,19 @@ namespace JeuxPoker
 
         }
 
-        public int call(int montantDu)
+        public bool call(int montantDu, out int montantRetour)
         {
+            //regarde si il a assez d'argent si oui il enleve le montant quil doit, sort en out le montant quil a payer et retourne true sinon il retourne false;
             if (argent >= montantDu)
             {
                 argent = argent - montantDu;
-                return montantDu;
+                montantRetour =  montantDu;
+                return true;
             }
             else
             {
-                coucher();
-                return 0;
+                montantRetour= -1;
+                return false;
             }
         }
 
@@ -62,15 +66,26 @@ namespace JeuxPoker
             actif = false;
         }
 
-        public int Raise(int montantDu, int montantRaise)
+        public bool Raise(int montantDu, int montantRaise, out int montanRetourner)
         {
-            call(montantDu);
-            if (actif)
+            int montantCall;
+            if (call(montantDu,out montantCall))
             {
-                miser(montantRaise);
-                return montantRaise;
+                if (miser(montantRaise, out montantRaise))
+                {
+                    montanRetourner = montantRaise + montantCall;
+                    return true;
+                }
+                else
+                {
+                    //note ATTENTION FAIRE QUELQUE CHOSE AVEC SE CODE D'ERREUR / DESACTIVER LA FONCTION CALL 
+                    montanRetourner = -2;
+                    return false;
+                }
+             
             }
-            return -1;
+            montanRetourner = -1;
+            return false;
 
 
         }

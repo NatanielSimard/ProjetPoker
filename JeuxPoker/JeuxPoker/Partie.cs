@@ -47,9 +47,10 @@ namespace JeuxPoker
                 //rotation de table
                 for (int i = 0; i < 4; i++)
                 {
+                    int montantMinDuJoueur = miseParJoueur;
                     if (joueur[i].actif)
                     {
-                        AfficherJeu();
+                        AfficherJeu(joueur[i]);
                         //[1:Coucher][2:check][3:call][4:Raise][5:miser]
                         int mode = SelectionDansMenu(1, 5);
                         bool retour = true;
@@ -65,9 +66,10 @@ namespace JeuxPoker
                                     joueur[i].Check();
                                     break;
                                 case 3:
-                                    if (miseParJoueur != 0)
+                                    int ajouterPot;
+                                    if (joueur[i].call(montantMinDuJoueur,out ajouterPot))
                                     {
-                                        pot = pot + joueur[i].call(miseParJoueur);
+                                        pot = pot + ajouterPot;
                                     }
                                     else
                                     {
@@ -78,62 +80,60 @@ namespace JeuxPoker
 
                                     break;
                                 case 4:
-                                    if (miseParJoueur != 0)
+                                    if (montantMinDuJoueur != 0)
                                     {
-                                        Console.WriteLine("combien Voulez vous misé ?");
-                                        bool verif = true;
+                                        int mise = DemanderMise();
+                                        int montant;
 
-                                        int montantRaiser;
-                                        do
+                                        if (joueur[1].Raise(montantMinDuJoueur, mise, out montant))
                                         {
-                                            verif = int.TryParse(Console.ReadLine(), out montantRaiser);
-                                            if (!verif)
+                                            if (montant == -1)
                                             {
-                                                Console.WriteLine("montant invalide");
+                                                pot = pot + montantMinDuJoueur;
+                                                montantMinDuJoueur = 0;
                                             }
-                                        } while (!verif);
-                                        if (!(montantRaiser > joueur[i].argent))
-                                        {
-                                            pot = pot + joueur[i].Raise(miseParJoueur, montantRaiser);
+                                            else
+                                            {
+                                                pot = pot + montantMinDuJoueur+montant;
+                                            }
                                         }
                                         else
                                         {
+                                            Console.WriteLine("veuiller choisir un autre mode pas assez d'argent");
                                             retour = false;
-                                            Console.WriteLine("montant trop haut pour votre total");
                                             Console.ReadKey();
                                         }
-
-
                                     }
                                     else
                                     {
-                                        Console.WriteLine("veuiller choisir miser, aucune mise est créer");
+                                        Console.WriteLine("utiliser miser, il n'y pas de mise");
                                         retour = false;
                                     }
+                                    
 
 
                                     break;
                                 case 5:
-                                    Console.WriteLine("combien Voulez vous misé ?");
-                                    bool verif1 = true;
+                                    if (montantMinDuJoueur == 0)
+                                    {
+                                        int mise = DemanderMise();
+                                        int montant;
 
-                                    int montantMiser;
-                                    do
-                                    {
-                                        verif1 = int.TryParse(Console.ReadLine(), out montantMiser);
-                                        if (!verif1)
+                                        if (joueur[1].miser(mise, out montant))
                                         {
-                                            Console.WriteLine("montant invalide");
+                                            pot = pot + montantMinDuJoueur + montant;
                                         }
-                                    } while (!verif1);
-                                    if (!(montantMiser > joueur[i].argent))
-                                    {
-                                        pot = pot + joueur[i].miser(montantMiser);
+                                        else
+                                        {
+                                            Console.WriteLine("veuiller choisir un autre mode pas assez d'argent");
+                                            retour = false;
+                                            Console.ReadKey();
+                                        }
                                     }
                                     else
                                     {
+                                        Console.WriteLine("une mise est deja crée");
                                         retour = false;
-                                        Console.WriteLine("montant trop haut pour votre total");
                                         Console.ReadKey();
                                     }
                                     break;
@@ -151,7 +151,27 @@ namespace JeuxPoker
             
 
         }
-        private void AfficherJeu()
+        public void afficherMain(Joueur joueurAfficher)
+        {
+
+        }
+        private int DemanderMise()
+        {
+            int mise;
+            Console.WriteLine("combien voulez vous miser");
+            bool verif1 = true;
+            do
+            {
+                verif1 = int.TryParse(Console.ReadLine(), out mise);
+                if (!verif1)
+                {
+                    Console.WriteLine("montant invalide");
+                }
+            } while (!verif1);
+            return mise;
+
+        }
+        private void AfficherJeu(Joueur joueurAfficher)
         {
 
         }
