@@ -13,7 +13,7 @@ namespace JeuxPoker
 
         public int argent { get; private set; }
 
-        public bool actif { get; private set; }
+        public bool actif { get; set; }
 
         public MainJoueur maMain;
 
@@ -40,9 +40,16 @@ namespace JeuxPoker
             }
 
         }
-        public void Check()
+        public bool Check(int montantAPayer)
         {
-
+            if (montantAPayer == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool call(int montantDu, out int montantRetour)
@@ -93,6 +100,11 @@ namespace JeuxPoker
         public void ResetMain()
         {
             maMain = new MainJoueur();
+        }
+
+        public void ajouterArgent(int argentAjouter)
+        {
+            argent = argent + argentAjouter;
         }
 
 

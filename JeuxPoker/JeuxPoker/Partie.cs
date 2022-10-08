@@ -38,36 +38,64 @@ namespace JeuxPoker
 
             
         }
-
-        public void JouerTour()
+        public void jouerPartie()
         {
-            for (int j = 0; j < 5; j++)
+            demarrerPartie();
+            for (int i = 0; i < 5; i++)
             {
-                AfficherCarte(leTour);
-                //rotation de table
+                JouerRotation();
+                //retourner Carte
+            }
+            FinPartie();
+            
+        }
+        /// <summary>
+        /// Fait jouer une rotation aux au joueur e s'occupe de tous les validation possible
+        /// </summary>
+        public void JouerRotation()
+        {
+            bool RepeterUneRotation = false;
+            do
+            {
+                RepeterUneRotation = false;
+                //boucler pour chaque joueur
                 for (int i = 0; i < 4; i++)
                 {
                     int montantMinDuJoueur = miseParJoueur;
                     if (joueur[i].actif)
                     {
-                        AfficherJeu(joueur[i]);
-                        //[1:Coucher][2:check][3:call][4:Raise][5:miser]
-                        int mode = SelectionDansMenu(1, 5);
-                        bool retour = true;
-                        //selecteur et verif du choix
+                        bool retour;
+                        //boucler pour s'assurer d'une selection valide du joueur
                         do
                         {
+                            AfficherJeu(joueur[i], montantMinDuJoueur);
+                            //[1:Coucher][2:check][3:call][4:Raise][5:miser]
+                            int mode = SelectionDansMenu(1, 5);
+                            retour = true;
+                            //selecteur et verif du choix
                             switch (mode)
                             {
+                                //coucher
                                 case 1:
                                     joueur[i].coucher();
                                     break;
+                                //check
                                 case 2:
-                                    joueur[i].Check();
+                                    if (joueur[i].Check(montantMinDuJoueur))
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        retour = false;
+                                        Console.WriteLine("option invalide Mise est de plus que 0");
+                                        Console.ReadKey();
+                                    }
                                     break;
+                                //call
                                 case 3:
                                     int ajouterPot;
-                                    if (joueur[i].call(montantMinDuJoueur,out ajouterPot))
+                                    if (joueur[i].call(montantMinDuJoueur, out ajouterPot))
                                     {
                                         pot = pot + ajouterPot;
                                     }
@@ -79,22 +107,28 @@ namespace JeuxPoker
                                     }
 
                                     break;
+                                //raise
                                 case 4:
                                     if (montantMinDuJoueur != 0)
                                     {
                                         int mise = DemanderMise();
                                         int montant;
 
-                                        if (joueur[1].Raise(montantMinDuJoueur, mise, out montant))
+                                        if (joueur[i].Raise(montantMinDuJoueur, mise, out montant))
                                         {
-                                            if (montant == -1)
+                                            if (montant == -2)
                                             {
                                                 pot = pot + montantMinDuJoueur;
                                                 montantMinDuJoueur = 0;
+                                                retour = false;
+                                                Console.WriteLine("vous N'avez pas assez d'argent pour miser");
+                                                Console.ReadKey();
                                             }
                                             else
                                             {
-                                                pot = pot + montantMinDuJoueur+montant;
+                                                RepeterUneRotation = true;
+                                                pot = pot + montantMinDuJoueur + montant;
+                                                miseParJoueur = montant;
                                             }
                                         }
                                         else
@@ -109,19 +143,25 @@ namespace JeuxPoker
                                         Console.WriteLine("utiliser miser, il n'y pas de mise");
                                         retour = false;
                                     }
-                                    
+
 
 
                                     break;
+                                //miser
                                 case 5:
                                     if (montantMinDuJoueur == 0)
                                     {
                                         int mise = DemanderMise();
                                         int montant;
 
-                                        if (joueur[1].miser(mise, out montant))
+                                        if (joueur[i].miser(mise, out montant))
                                         {
-                                            pot = pot + montantMinDuJoueur + montant;
+                                            if (i != 1)
+                                            {
+                                                RepeterUneRotation = true;
+                                            }
+                                            pot = pot + montant;
+                                            miseParJoueur = montant;
                                         }
                                         else
                                         {
@@ -146,10 +186,8 @@ namespace JeuxPoker
                         } while (!retour);
                     }
                 }
-
-            }
+            } while (RepeterUneRotation);
             
-
         }
         public void afficherMain(Joueur joueurAfficher)
         {
@@ -171,7 +209,7 @@ namespace JeuxPoker
             return mise;
 
         }
-        private void AfficherJeu(Joueur joueurAfficher)
+        private void AfficherJeu(Joueur joueurAfficher,int montantApayer)
         {
 
         }
@@ -181,12 +219,37 @@ namespace JeuxPoker
         }
         private void UpdaterGagnant(Joueur joueurUp)
         { 
-            
-        
+
         }
-        private bool FinPartie()
+        private void demarrerPartie()
         {
-            return true;
+            lePaquet.Melanger();
+            //distribuerCarte
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 4; i++)
+                {
+                    lePaquet.Distribuer(joueur[j]);
+                }
+            }
+            //initialiser le tour
+
+        }
+        private void FinPartie()
+        {
+            int idGagnant = getGagnant();
+            joueur[idGagnant].ajouterArgent(pot);
+            Console.WriteLine("Bravo Joueur "+ idGagnant);
+            pot = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                joueur[i].ResetMain();
+                joueur[i].actif = true;
+            }
+            miseParJoueur = 0;
+            lePaquet.Reinitialiser();
+            //reset leTour
+
         }
 
         private void AfficherCarte(Tour tourAfficher)
