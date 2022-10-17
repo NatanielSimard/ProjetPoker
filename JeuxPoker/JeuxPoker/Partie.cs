@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -38,16 +39,21 @@ namespace JeuxPoker
 
             
         }
-        public void jouerPartie()
+        /// <summary>
+        /// la fonction permet de jouer une partie , elle retourne l'intention des joueurs de jouer un nouvelle partie dans un bool
+        /// </summary>
+        /// <returns></returns>
+        public bool jouerPartie()
         {
+            bool continuer;
             demarrerPartie();
             for (int i = 0; i < 5; i++)
             {
                 JouerRotation();
                 //retourner Carte
             }
-            FinPartie();
-            
+            continuer = FinPartie();
+            return continuer;
         }
         /// <summary>
         /// Fait jouer une rotation aux au joueur e s'occupe de tous les validation possible
@@ -149,6 +155,7 @@ namespace JeuxPoker
                                     break;
                                 //miser
                                 case 5:
+                                    //si raise est favorable il est indiqués a l'utilisateur et reboucle
                                     if (montantMinDuJoueur == 0)
                                     {
                                         int mise = DemanderMise();
@@ -193,6 +200,10 @@ namespace JeuxPoker
         {
 
         }
+        /// <summary>
+        /// demande la mise des joueurs et la valide retourne un INT
+        /// </summary>
+        /// <returns></returns>
         private int DemanderMise()
         {
             int mise;
@@ -209,6 +220,22 @@ namespace JeuxPoker
             return mise;
 
         }
+        /// <summary>
+        /// affiche le jeu completement, donc tous les partie, la main, les cartes communes les mise, le pot et le montant du joueur
+        /// 
+        /// affichage voulue
+        /// 
+        /// ------------------------------------------------------------------------------------------------------
+        /// Nom Du Joueur                       pot:xx$ | Montant devant ètre miser: xx$ | Montant Du joueur: xxx$
+        /// 
+        /// Carte commune:          5P ## ## ## ##
+        /// 
+        /// Votre Main                  3Cr 6P
+        /// 
+        /// [1:Coucher][2:check][3:call][4:Raise][5:miser]
+        /// </summary>
+        /// <param name="joueurAfficher"></param>
+        /// <param name="montantApayer"></param>
         private void AfficherJeu(Joueur joueurAfficher,int montantApayer)
         {
 
@@ -233,14 +260,16 @@ namespace JeuxPoker
                 }
             }
             //initialiser le tour
-
+            leTour = new Tour();
+                //distribuer les cartes communes
         }
-        private void FinPartie()
+        private bool FinPartie()
         {
             int idGagnant = getGagnant();
             joueur[idGagnant].ajouterArgent(pot);
             Console.WriteLine("Bravo Joueur "+ idGagnant);
             pot = 0;
+            //remise a zéro des joueurs
             for (int i = 0; i < 4; i++)
             {
                 joueur[i].ResetMain();
@@ -248,7 +277,18 @@ namespace JeuxPoker
             }
             miseParJoueur = 0;
             lePaquet.Reinitialiser();
-            //reset leTour
+
+            //continuez ??
+            Console.WriteLine("voulez vous continuez une nouvelle partie [1:oui][2:non]");
+            int choix = SelectionDansMenu(1, 2);
+            if (choix==1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
 
         }
 

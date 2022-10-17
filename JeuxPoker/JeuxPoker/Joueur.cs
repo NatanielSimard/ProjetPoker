@@ -25,6 +25,12 @@ namespace JeuxPoker
             this.actif = true;
             maMain = new MainJoueur();
         }
+        /// <summary>
+        /// si le joueur à assez d'argent pour sa mise se montant est dédui de son total et retourne se meme montant
+        /// </summary>
+        /// <param name="montantMiser"></param>
+        /// <param name="mise"></param>
+        /// <returns></returns>
         public bool miser(int montantMiser, out int mise)
         {
             if (argent >= montantMiser)
@@ -40,6 +46,11 @@ namespace JeuxPoker
             }
 
         }
+        /// <summary>
+        /// si le montant a payer est de 0 il est retourner true, sinon false
+        /// </summary>
+        /// <param name="montantAPayer"></param>
+        /// <returns></returns>
         public bool Check(int montantAPayer)
         {
             if (montantAPayer == 0)
@@ -51,7 +62,12 @@ namespace JeuxPoker
                 return false;
             }
         }
-
+        /// <summary>
+        /// si le joueur a assez d'argent pour call se montant lui est retirer, sinon false est retourner
+        /// </summary>
+        /// <param name="montantDu"></param>
+        /// <param name="montantRetour"></param>
+        /// <returns></returns>
         public bool call(int montantDu, out int montantRetour)
         {
             //regarde si il a assez d'argent si oui il enleve le montant quil doit, sort en out le montant quil a payer et retourne true sinon il retourne false;
@@ -67,7 +83,9 @@ namespace JeuxPoker
                 return false;
             }
         }
-
+        /// <summary>
+        /// l'attribut actif est mis a false
+        /// </summary>
         public void coucher()
         {
             actif = false;
