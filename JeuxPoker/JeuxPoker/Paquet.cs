@@ -92,5 +92,20 @@ namespace JeuxPoker
         public void FlopTurnRiver(Tour t)
         {
         }
+        public Carte GetTopCard()
+        {
+            Carte laCarte;
+            bool Marc = false;            
+            for (int i = 0; i < 52; i++)
+            {
+                if (TableauInitial[i] != null)
+                {
+                    laCarte = TableauInitial[i];
+                    TableauInitial[i] = null;
+                    return laCarte;
+                }
+            }
+            return null;
+        }
     }
 }
