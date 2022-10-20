@@ -31,8 +31,10 @@ namespace JeuxPoker
     }
     internal class Carte
     {
-        string lechiffre, laCouleur;
-        bool visible=false;
+        public string lechiffre { get; private set; }
+        public string laCouleur { get; private set; }
+
+        public bool visible { get; private set; }
         // Chiffre 2 pour 2 et 14 pour As
         // Couleur 0 pour Coeur , 1 pour Carreau , 2 pour Trefle , 3 pour Pique.
         public Carte(int chiffre , int couleur)

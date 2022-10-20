@@ -8,10 +8,10 @@ namespace JeuxPoker
 {
     internal class MainJoueur
     {
-        Carte[] cartes = new Carte[2];
-        public MainJoueur(Carte[] les2Cartes)
+        public Carte[] cartes;
+        public MainJoueur()
         {
-            cartes= les2Cartes;
+            cartes = new Carte[2];
         }
     }
 }

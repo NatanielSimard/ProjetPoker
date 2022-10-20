@@ -14,12 +14,12 @@ namespace JeuxPoker
 
     {
         Random random;
-        Carte[] TableauInitial = new Carte[52];
+        public Carte[] TableauInitial = new Carte[52];
         Carte[] TableauTampon = new Carte[52];
         List<int> TableauTamponList = new List<int>();
         public Paquet()
         {
-
+            Reinitialiser();
         }
 
         public void Distribuer(Joueur j)
@@ -51,7 +51,7 @@ namespace JeuxPoker
         }
         public void Reinitialiser()
         {
-            TableauInitial = null;
+            TableauInitial = new Carte[52] ;
             
             for (int i = 0; i < 4; i++)
             {

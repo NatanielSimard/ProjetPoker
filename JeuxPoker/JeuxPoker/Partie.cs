@@ -51,6 +51,7 @@ namespace JeuxPoker
             {
                 JouerRotation();
                 //retourner Carte
+                leTour.changerEtat();
             }
             continuer = FinPartie();
             return continuer;
@@ -196,10 +197,7 @@ namespace JeuxPoker
             } while (RepeterUneRotation);
             
         }
-        public void afficherMain(Joueur joueurAfficher)
-        {
 
-        }
         /// <summary>
         /// demande la mise des joueurs et la valide retourne un INT
         /// </summary>
@@ -220,6 +218,57 @@ namespace JeuxPoker
             return mise;
 
         }
+        public int getGagnant()
+        {
+            return 1;
+        }
+        private void UpdaterGagnant(Joueur joueurUp)
+        {
+
+        }
+        private void demarrerPartie()
+        {
+            lePaquet.Melanger();
+            //distribuerCarte
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 4; i++)
+                {
+                    lePaquet.Distribuer(joueur[j]);
+                }
+            }
+            //initialiser le tour
+            leTour = new Tour();
+            //distribuer les cartes communes
+        }
+        private bool FinPartie()
+        {
+            int idGagnant = getGagnant();
+            joueur[idGagnant].ajouterArgent(pot);
+            Console.WriteLine("Bravo Joueur " + idGagnant);
+            pot = 0;
+            //remise a zéro des joueurs
+            for (int i = 0; i < 4; i++)
+            {
+                joueur[i].ResetMain();
+                joueur[i].actif = true;
+            }
+            miseParJoueur = 0;
+            lePaquet.Reinitialiser();
+            leTour.ResetTour();
+            //continuez ??
+            Console.WriteLine("voulez vous continuez une nouvelle partie [1:oui][2:non]");
+            int choix = SelectionDansMenu(1, 2);
+            if (choix == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
         /// <summary>
         /// affiche le jeu completement, donc tous les partie, la main, les cartes communes les mise, le pot et le montant du joueur
         /// 
@@ -238,63 +287,115 @@ namespace JeuxPoker
         /// <param name="montantApayer"></param>
         private void AfficherJeu(Joueur joueurAfficher,int montantApayer)
         {
-
+            Console.Write(joueurAfficher.nom);
+            Console.Write("\t\t pot:"+pot+" |");
+            Console.Write(" montant devant etre miser: " + montantApayer + " |");
+            Console.Write(" montant en banque: " + joueurAfficher.argent + " |");
+            Console.WriteLine("");
+            Console.Write("carte commune: \t\t");
+            AfficherCarteTour();
+            Console.WriteLine("");
+            Console.Write("\t\t");
+            afficherMain(joueurAfficher);
+            Console.WriteLine("");
+            Console.WriteLine("[1:Coucher][2:check][3:call][4:Raise][5:miser]");
         }
-        public int getGagnant()
+        public void afficherMain(Joueur joueurAfficher)
         {
-            return 1;
+            afficherCarte(joueurAfficher.maMain.cartes[1]);
+            afficherCarte(joueurAfficher.maMain.cartes[1]);
         }
-        private void UpdaterGagnant(Joueur joueurUp)
-        { 
 
-        }
-        private void demarrerPartie()
+        static public void afficherCarte(Carte carteAafficher)
         {
-            lePaquet.Melanger();
-            //distribuerCarte
-            for (int i = 0; i < 2; i++)
+            switch (carteAafficher.laCouleur)
             {
-                for (int j = 0; j < 4; i++)
+                case "Coeur":
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("♥");
+                    break;
+                case "Carreau":
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("♦");
+                    break;
+                case "Trefle":
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("♣");
+                    break;
+                case "Pique":
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("♠");
+                    break;
+                default:
+                    break;
+            }
+            switch (carteAafficher.lechiffre)
+            {
+                case "As":
+                    Console.Write("A");
+                    break;
+                case "Roi":
+                    Console.Write("K");
+                    break;
+                case "Dame":
+                    Console.Write("Q");
+                    break;
+                case "Valet":
+                    Console.Write("J");
+                    break;
+                case "Dix":
+                    Console.Write("10");
+                    break;
+                case "Neuf":
+                    Console.Write("9");
+                    break;
+                case "Huit":
+                    Console.Write("8");
+                    break;
+                case "Sept":
+                    Console.Write("7");
+                    break;
+                case "Six":
+                    Console.Write("6");
+                    break;
+                case "Cinq":
+                    Console.Write("5");
+                    break;
+                case "Quatre":
+                    Console.Write("4");
+                    break;
+                case "Trois":
+                    Console.Write("3");
+                    break;
+                case "Deux":
+                    Console.Write("2");
+                    break;
+                
+
+
+                default:
+                    Console.Write("#");
+                    break;
+                    
+            }
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+        }
+        private void AfficherCarteTour()
+        {
+            Tour tourAfficher = leTour;
+            for (int i = 0; i < 5; i++)
+            {
+                Console.Write("\t");
+                if (tourAfficher.carteCommune[i].visible)
                 {
-                    lePaquet.Distribuer(joueur[j]);
+                    afficherCarte(tourAfficher.carteCommune[i]);
+                }
+                else
+                {
+                    Console.Write("##");
                 }
             }
-            //initialiser le tour
-            leTour = new Tour();
-                //distribuer les cartes communes
-        }
-        private bool FinPartie()
-        {
-            int idGagnant = getGagnant();
-            joueur[idGagnant].ajouterArgent(pot);
-            Console.WriteLine("Bravo Joueur "+ idGagnant);
-            pot = 0;
-            //remise a zéro des joueurs
-            for (int i = 0; i < 4; i++)
-            {
-                joueur[i].ResetMain();
-                joueur[i].actif = true;
-            }
-            miseParJoueur = 0;
-            lePaquet.Reinitialiser();
-
-            //continuez ??
-            Console.WriteLine("voulez vous continuez une nouvelle partie [1:oui][2:non]");
-            int choix = SelectionDansMenu(1, 2);
-            if (choix==1)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        }
-
-        private void AfficherCarte(Tour tourAfficher)
-        {
-
         }
         private void updateEtatTour()
         {

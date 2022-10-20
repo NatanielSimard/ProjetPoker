@@ -6,7 +6,13 @@ namespace JeuxPoker
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Paquet paq = new Paquet();
+            foreach (Carte c in paq.TableauInitial)
+            {
+                Partie.afficherCarte(c);
+                Console.WriteLine("");
+            }
+            
         }
     }
 }

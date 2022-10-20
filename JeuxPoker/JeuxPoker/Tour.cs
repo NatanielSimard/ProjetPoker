@@ -8,10 +8,10 @@ namespace JeuxPoker
 {
     internal class Tour
     {
-        Carte[] carteCommune;
+        public Carte[] carteCommune { get;  set; }
         int etatTour;
 
-        Tour()
+        public Tour()
         {
             etatTour = 0;
             carteCommune = new Carte[5];
@@ -20,7 +20,7 @@ namespace JeuxPoker
         {
             if (etatTour <=5)
             {
-                carteCommune[etatTour].Retourner();
+                carteCommune[etatTour].retourner();
                 etatTour++;
             }
         }
