@@ -15,19 +15,19 @@ namespace JeuxPoker
     }
     enum nbCarte
     {
-     Deux=2,
-     Trois=3,
-     Quatre=4,
-     Cinq=5,
-     Six=6,
-     Sept=7,
-     Huit=8,
-     Neuf=9,
-     Dix=10,
-     Valet=11,
-     Dame=12,
-     Roi=13,
-     As=14,
+     Deux=0,
+     Trois=1,
+     Quatre=2,
+     Cinq=3,
+     Six=4,
+     Sept=5,
+     Huit=6,
+     Neuf=7,
+     Dix=8,
+     Valet=9,
+     Dame=10,
+     Roi=11,
+     As=12,
     }
     internal class Carte
     {
