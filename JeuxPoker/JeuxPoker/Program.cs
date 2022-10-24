@@ -6,13 +6,11 @@ namespace JeuxPoker
     {
         static void Main(string[] args)
         {
-            Paquet paq = new Paquet();
-            foreach (Carte c in paq.TableauInitial)
-            {
-                Partie.afficherCarte(c);
-                Console.WriteLine("");
-            }
-            
+            Console.WriteLine("combien les joueurs ont comme mise de depart");
+            int nb =Convert.ToInt32(Console.ReadLine());
+            Partie part = new Partie(nb);
+            part.jouerPartie();
+
         }
     }
 }

@@ -17,10 +17,9 @@ namespace JeuxPoker
 
         public MainJoueur maMain;
 
-        public Joueur(string nom, string pseudo, int argent)
+        public Joueur(string nom, int argent)
         {
             this.nom = nom;
-            this.pseudo = pseudo;
             this.argent = argent;
             this.actif = true;
             maMain = new MainJoueur();

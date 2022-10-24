@@ -41,6 +41,7 @@ namespace JeuxPoker
         {
             lechiffre = Enum.GetName(typeof(nbCarte), chiffre);
             laCouleur = Enum.GetName(typeof(couleur), couleur);
+            visible = false;
         }
         public void retourner()
         {

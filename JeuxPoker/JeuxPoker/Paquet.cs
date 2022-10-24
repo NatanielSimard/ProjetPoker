@@ -24,25 +24,35 @@ namespace JeuxPoker
 
         public void Distribuer(Joueur j)
         {
+            if (j.maMain.cartes[0] == null)
+            {
+                j.maMain.cartes[0] = GetTopCard();
+            }
+            else
+            {
+                j.maMain.cartes[1] = GetTopCard();
+            }
+
         }
+
+        
         public void Melanger()
         {
             //Mise en tampon
             TableauTampon = TableauInitial;
             //Vider le Tableau
-            TableauInitial = null;
+            TableauInitial = new Carte[52];
             //Numération de la liste
             for(int i = 0; i < 52; i++)
             {
                 TableauTamponList.Add(i);
             }
-
+            random = new Random();
             for (int i = 0; i < 52; i++)
             {
                 // Le count du tableau s'actualisera a chaque boucle.
                 int nb = TableauTamponList.Count;
-                random = new Random(nb);
-                int index = random.Next(nb);
+                int index = random.Next(0,nb-1);
                 //On met la carte du tableauTampon qui en position index random de la liste dans le tableau initial.
                 TableauInitial[i] = TableauTampon[TableauTamponList[index]];
             }
@@ -91,17 +101,25 @@ namespace JeuxPoker
         }
         public void FlopTurnRiver(Tour t)
         {
+            for (int i = 0; i < 3; i++)
+            {
+                t.carteCommune[i] = GetTopCard();
+            }
+            GetTopCard();
+            t.carteCommune[3] = GetTopCard();
+            GetTopCard();
+            t.carteCommune[4] = GetTopCard();
+
         }
         public Carte GetTopCard()
         {
-            Carte laCarte;
-            bool Marc = false;            
+            Carte laCarte;          
             for (int i = 0; i < 52; i++)
             {
-                if (TableauInitial[i] != null)
+                if (TableauInitial[i].lechiffre != null)
                 {
                     laCarte = TableauInitial[i];
-                    TableauInitial[i] = null;
+                    TableauInitial[i] = new Carte(-1, -1);
                     return laCarte;
                 }
             }

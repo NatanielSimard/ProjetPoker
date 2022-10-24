@@ -21,16 +21,14 @@ namespace JeuxPoker
         int miseParJoueur;
         
 
-        Partie(int montantDedepart)
+        public Partie(int montantDedepart)
         {
             joueur = new Joueur[4];
             for (int i = 0; i < 4; i++)
             {
                 Console.WriteLine("Quelle est le nom du joueur #" + (i + 1));
                 string nom =Console.ReadLine();
-                Console.WriteLine("Quelle est le pseudo du joueur #" + (i + 1));
-                string pseudo = Console.ReadLine();
-                joueur[i] = new Joueur(nom, pseudo, montantDedepart);
+                joueur[i] = new Joueur(nom, montantDedepart);
             }
             lePaquet = new Paquet();
             leTour = new Tour();
@@ -39,6 +37,10 @@ namespace JeuxPoker
 
             
         }
+
+        //---section des fonction de partie
+
+
         /// <summary>
         /// la fonction permet de jouer une partie , elle retourne l'intention des joueurs de jouer un nouvelle partie dans un bool
         /// </summary>
@@ -47,7 +49,7 @@ namespace JeuxPoker
         {
             bool continuer;
             demarrerPartie();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
             {
                 JouerRotation();
                 //retourner Carte
@@ -64,6 +66,10 @@ namespace JeuxPoker
             bool RepeterUneRotation = false;
             do
             {
+                if (!RepeterUneRotation)
+                {
+                    miseParJoueur = 0;
+                }
                 RepeterUneRotation = false;
                 //boucler pour chaque joueur
                 for (int i = 0; i < 4; i++)
@@ -166,7 +172,7 @@ namespace JeuxPoker
                                         {
                                             if (i != 1)
                                             {
-                                                RepeterUneRotation = true;
+                                                RepeterUneRotation = false;
                                             }
                                             pot = pot + montant;
                                             miseParJoueur = montant;
@@ -228,11 +234,12 @@ namespace JeuxPoker
         }
         private void demarrerPartie()
         {
+
             lePaquet.Melanger();
             //distribuerCarte
             for (int i = 0; i < 2; i++)
             {
-                for (int j = 0; j < 4; i++)
+                for (int j = 0; j < 4; j++)
                 {
                     lePaquet.Distribuer(joueur[j]);
                 }
@@ -240,6 +247,7 @@ namespace JeuxPoker
             //initialiser le tour
             leTour = new Tour();
             //distribuer les cartes communes
+            lePaquet.FlopTurnRiver(leTour);
         }
         private bool FinPartie()
         {
@@ -256,6 +264,7 @@ namespace JeuxPoker
             miseParJoueur = 0;
             lePaquet.Reinitialiser();
             leTour.ResetTour();
+            lePaquet.Reinitialiser();
             //continuez ??
             Console.WriteLine("voulez vous continuez une nouvelle partie [1:oui][2:non]");
             int choix = SelectionDansMenu(1, 2);
@@ -269,6 +278,13 @@ namespace JeuxPoker
             }
 
         }
+
+
+
+        //section de l'affichage--------------------------------------------
+
+
+
         /// <summary>
         /// affiche le jeu completement, donc tous les partie, la main, les cartes communes les mise, le pot et le montant du joueur
         /// 
@@ -287,7 +303,9 @@ namespace JeuxPoker
         /// <param name="montantApayer"></param>
         private void AfficherJeu(Joueur joueurAfficher,int montantApayer)
         {
-            Console.Write(joueurAfficher.nom);
+            Console.Clear();
+            Console.WriteLine("tour: "+leTour.etatTour);
+            Console.Write("nom: " + joueurAfficher.nom);
             Console.Write("\t\t pot:"+pot+" |");
             Console.Write(" montant devant etre miser: " + montantApayer + " |");
             Console.Write(" montant en banque: " + joueurAfficher.argent + " |");
@@ -302,7 +320,8 @@ namespace JeuxPoker
         }
         public void afficherMain(Joueur joueurAfficher)
         {
-            afficherCarte(joueurAfficher.maMain.cartes[1]);
+            afficherCarte(joueurAfficher.maMain.cartes[0]);
+            Console.Write(" ");
             afficherCarte(joueurAfficher.maMain.cartes[1]);
         }
 
@@ -397,6 +416,11 @@ namespace JeuxPoker
                 }
             }
         }
+
+
+
+        //---Section d'aide a la classe
+
         private void updateEtatTour()
         {
 
