@@ -29,7 +29,7 @@ namespace JeuxPoker
      Roi=11,
      As=12,
     }
-    internal class Carte
+    public class Carte
     {
         public string lechiffre { get; private set; }
         public string laCouleur { get; private set; }

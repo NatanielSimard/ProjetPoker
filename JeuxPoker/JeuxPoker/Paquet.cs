@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JeuxPoker
 {
-    internal class Paquet
+     public class Paquet
 
     // Infos Cartes
     // Chiffre 0 pour 2 et 12 pour As
@@ -52,9 +52,10 @@ namespace JeuxPoker
             {
                 // Le count du tableau s'actualisera a chaque boucle.
                 int nb = TableauTamponList.Count;
-                int index = random.Next(0,nb-1);
+                int index = random.Next(0, nb);
                 //On met la carte du tableauTampon qui en position index random de la liste dans le tableau initial.
                 TableauInitial[i] = TableauTampon[TableauTamponList[index]];
+                TableauTamponList.Remove(index);
             }
 
 

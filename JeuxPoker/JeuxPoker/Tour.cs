@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JeuxPoker
 {
-    internal class Tour
+    public class Tour
     {
         public Carte[] carteCommune { get;  set; }
         public int etatTour { get; private set; }

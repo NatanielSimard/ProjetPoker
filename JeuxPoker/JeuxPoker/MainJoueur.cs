@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JeuxPoker
 {
-    internal class MainJoueur
+    public class MainJoueur
     {
         public Carte[] cartes;
         public MainJoueur()

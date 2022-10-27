@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JeuxPoker
 {
-    internal class Joueur
+    public class Joueur
     {
         public string nom { get; private set; }
         public string pseudo { get; private set; }
