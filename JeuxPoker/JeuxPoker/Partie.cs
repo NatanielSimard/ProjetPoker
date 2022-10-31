@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -33,7 +34,7 @@ namespace JeuxPoker
             lePaquet = new Paquet();
             leTour = new Tour();
             pot = 0;
-            miseParJoueur = 0;
+            miseParJoueur = 2;
 
             
         }
@@ -69,136 +70,164 @@ namespace JeuxPoker
                 if (!RepeterUneRotation)
                 {
                     miseParJoueur = 0;
+                    for (int h = 0; h < 4; h++)
+                    {
+                        joueur[h].DernièreMise = 0;
+                    }
                 }
                 RepeterUneRotation = false;
+
                 //boucler pour chaque joueur
                 for (int i = 0; i < 4; i++)
                 {
-                    int montantMinDuJoueur = miseParJoueur;
-                    if (joueur[i].actif)
+                    int montantMinDuJoueur = miseParJoueur - joueur[i].DernièreMise;
+                    float testMise=0;
+                    //est un morceau de code qui permet l'arret du tour quand tous les joueurs on atteint la mise demander de l84 a l98
+                    for (int h = 0; h < 4; h++)
                     {
-                        bool retour;
-                        //boucler pour s'assurer d'une selection valide du joueur
-                        do
+                        testMise = testMise + joueur[h].DernièreMise;
+                    }
+                    int intJoueurActif=0;
+                    for (int g = 0; g < 4; g++)
+                    {
+                        if (joueur[i].actif)
                         {
-                            AfficherJeu(joueur[i], montantMinDuJoueur);
-                            //[1:Coucher][2:check][3:call][4:Raise][5:miser]
-                            int mode = SelectionDansMenu(1, 5);
-                            retour = true;
-                            //selecteur et verif du choix
-                            switch (mode)
+                            intJoueurActif++;
+                        }
+                    }
+                    if (!(testMise != 0 && testMise/intJoueurActif == joueur[1].DernièreMise ))
+
+                    {
+                        if (joueur[i].actif)
+                        {
+                            bool retour;
+                            //boucler pour s'assurer d'une selection valide du joueur
+                            do
                             {
-                                //coucher
-                                case 1:
-                                    joueur[i].coucher();
-                                    break;
-                                //check
-                                case 2:
-                                    if (joueur[i].Check(montantMinDuJoueur))
-                                    {
-
-                                    }
-                                    else
-                                    {
-                                        retour = false;
-                                        Console.WriteLine("option invalide Mise est de plus que 0");
-                                        Console.ReadKey();
-                                    }
-                                    break;
-                                //call
-                                case 3:
-                                    int ajouterPot;
-                                    if (joueur[i].call(montantMinDuJoueur, out ajouterPot))
-                                    {
-                                        pot = pot + ajouterPot;
-                                    }
-                                    else
-                                    {
-                                        retour = false;
-                                        Console.WriteLine("option invalide Mise est de 0");
-                                        Console.ReadKey();
-                                    }
-
-                                    break;
-                                //raise
-                                case 4:
-                                    if (montantMinDuJoueur != 0)
-                                    {
-                                        int mise = DemanderMise();
-                                        int montant;
-
-                                        if (joueur[i].Raise(montantMinDuJoueur, mise, out montant))
+                                AfficherJeu(joueur[i], montantMinDuJoueur);
+                                //[1:Coucher][2:check][3:call][4:Raise][5:miser]
+                                int mode = SelectionDansMenu(1, 5);
+                                retour = true;
+                                //selecteur et verif du choix
+                                switch (mode)
+                                {
+                                    //coucher
+                                    case 1:
+                                        joueur[i].coucher();
+                                        break;
+                                    //check
+                                    case 2:
+                                        if (joueur[i].Check(montantMinDuJoueur))
                                         {
-                                            if (montant == -2)
+
+                                        }
+                                        else
+                                        {
+                                            retour = false;
+                                            Console.WriteLine("option invalide Mise est de plus que 0");
+                                            Console.ReadKey();
+                                        }
+                                        break;
+                                    //call
+                                    case 3:
+                                        int ajouterPot;
+                                        if (joueur[i].call(montantMinDuJoueur, out ajouterPot))
+                                        {
+                                            pot = pot + ajouterPot;
+                                            joueur[i].DernièreMise = ajouterPot;
+                                        }
+                                        else
+                                        {
+                                            retour = false;
+                                            Console.WriteLine("option invalide Mise est de 0");
+                                            Console.ReadKey();
+                                        }
+
+                                        break;
+                                    //raise
+                                    case 4:
+                                        if (montantMinDuJoueur != 0)
+                                        {
+                                            int mise = DemanderMise();
+                                            int montant;
+
+                                            if (joueur[i].Raise(montantMinDuJoueur, mise, out montant))
                                             {
-                                                pot = pot + montantMinDuJoueur;
-                                                montantMinDuJoueur = 0;
-                                                retour = false;
-                                                Console.WriteLine("vous N'avez pas assez d'argent pour miser");
-                                                Console.ReadKey();
+                                                if (montant == -2)
+                                                {
+                                                    pot = pot + montantMinDuJoueur;
+                                                    montantMinDuJoueur = 0;
+                                                    retour = false;
+                                                    joueur[i].DernièreMise = montant;
+                                                    Console.WriteLine("vous N'avez pas assez d'argent pour miser");
+                                                    Console.ReadKey();
+                                                }
+                                                else
+                                                {
+                                                    RepeterUneRotation = true;
+                                                    pot = pot + montantMinDuJoueur + montant;
+                                                    miseParJoueur = montant;
+                                                    joueur[i].DernièreMise = montant;
+                                                }
                                             }
                                             else
                                             {
-                                                RepeterUneRotation = true;
-                                                pot = pot + montantMinDuJoueur + montant;
-                                                miseParJoueur = montant;
+                                                Console.WriteLine("veuiller choisir un autre mode pas assez d'argent");
+                                                retour = false;
+                                                Console.ReadKey();
                                             }
                                         }
                                         else
                                         {
-                                            Console.WriteLine("veuiller choisir un autre mode pas assez d'argent");
+                                            Console.WriteLine("utiliser miser, il n'y pas de mise");
                                             retour = false;
-                                            Console.ReadKey();
                                         }
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("utiliser miser, il n'y pas de mise");
-                                        retour = false;
-                                    }
 
 
 
-                                    break;
-                                //miser
-                                case 5:
-                                    //si raise est favorable il est indiqués a l'utilisateur et reboucle
-                                    if (montantMinDuJoueur == 0)
-                                    {
-                                        int mise = DemanderMise();
-                                        int montant;
-
-                                        if (joueur[i].miser(mise, out montant))
+                                        break;
+                                    //miser
+                                    case 5:
+                                        //si raise est favorable il est indiqués a l'utilisateur et reboucle
+                                        if (montantMinDuJoueur == 0)
                                         {
-                                            if (i != 1)
+                                            int mise = DemanderMise();
+                                            int montant;
+
+                                            if (joueur[i].miser(mise, out montant))
                                             {
-                                                RepeterUneRotation = false;
+                                                if (i != 0)
+                                                {
+                                                    RepeterUneRotation = true;
+                                                }
+                                                pot = pot + montant;
+                                                miseParJoueur = montant;
+                                                joueur[i].DernièreMise = montant;
                                             }
-                                            pot = pot + montant;
-                                            miseParJoueur = montant;
+                                            else
+                                            {
+                                                Console.WriteLine("veuiller choisir un autre mode pas assez d'argent");
+                                                retour = false;
+                                                Console.ReadKey();
+                                            }
                                         }
                                         else
                                         {
-                                            Console.WriteLine("veuiller choisir un autre mode pas assez d'argent");
+                                            Console.WriteLine("une mise est deja crée");
                                             retour = false;
                                             Console.ReadKey();
                                         }
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("une mise est deja crée");
-                                        retour = false;
-                                        Console.ReadKey();
-                                    }
-                                    break;
+                                        break;
 
 
 
-                                default:
-                                    break;
-                            }
-                        } while (!retour);
+                                    default:
+                                        break;
+                                }
+                            } while (!retour);
+                        }
                     }
+                    
                 }
             } while (RepeterUneRotation);
             
@@ -288,16 +317,6 @@ namespace JeuxPoker
         /// <summary>
         /// affiche le jeu completement, donc tous les partie, la main, les cartes communes les mise, le pot et le montant du joueur
         /// 
-        /// affichage voulue
-        /// 
-        /// ------------------------------------------------------------------------------------------------------
-        /// Nom Du Joueur                       pot:xx$ | Montant devant ètre miser: xx$ | Montant Du joueur: xxx$
-        /// 
-        /// Carte commune:          5P ## ## ## ##
-        /// 
-        /// Votre Main                  3Cr 6P
-        /// 
-        /// [1:Coucher][2:check][3:call][4:Raise][5:miser]
         /// </summary>
         /// <param name="joueurAfficher"></param>
         /// <param name="montantApayer"></param>
@@ -389,8 +408,6 @@ namespace JeuxPoker
                 case "Deux":
                     Console.Write("2");
                     break;
-                
-
 
                 default:
                     Console.Write("#");

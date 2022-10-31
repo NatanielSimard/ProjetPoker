@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace JeuxPoker
         public bool visible { get; private set; }
         // Chiffre 2 pour 2 et 14 pour As
         // Couleur 0 pour Coeur , 1 pour Carreau , 2 pour Trefle , 3 pour Pique.
-        public Carte(int chiffre , int couleur)
+        public Carte(int chiffre, int couleur)
         {
             lechiffre = Enum.GetName(typeof(nbCarte), chiffre);
             laCouleur = Enum.GetName(typeof(couleur), couleur);
@@ -51,5 +52,7 @@ namespace JeuxPoker
         {
 
         }
+
+
     }
 }

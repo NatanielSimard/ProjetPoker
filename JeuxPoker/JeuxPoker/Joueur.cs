@@ -9,10 +9,10 @@ namespace JeuxPoker
     public class Joueur
     {
         public string nom { get; private set; }
-        public string pseudo { get; private set; }
 
         public int argent { get; private set; }
 
+        public int DernièreMise { get; set; }
         public bool actif { get; set; }
 
         public MainJoueur maMain;
@@ -22,6 +22,8 @@ namespace JeuxPoker
             this.nom = nom;
             this.argent = argent;
             this.actif = true;
+            DernièreMise = 0;
+
             maMain = new MainJoueur();
         }
         /// <summary>
