@@ -253,9 +253,45 @@ namespace JeuxPoker
             return mise;
 
         }
-        public int getGagnant()
+        public Joueur getGagnant()
         {
-            return 1;
+            for (int i = 0; i < 4; i++)
+            {
+                joueur[i].maMain.mainFinale = MainFinale(joueur[i]);
+            }
+            
+        }
+
+        public List<Carte> MainFinale(Joueur joueurChoix)
+        {
+            List<Carte> mainFinale = new List<Carte>();
+            List<Carte> mainChoix2 = new List<Carte>();
+            mainChoix2.Add(joueurChoix.maMain.cartes[0]);
+            mainChoix2.Add(joueurChoix.maMain.cartes[1]);
+            mainChoix2.Add(leTour.carteCommune[0]);
+            mainChoix2.Add(leTour.carteCommune[1]);
+            mainChoix2.Add(leTour.carteCommune[2]);
+            mainChoix2.Add(leTour.carteCommune[3]);
+            mainChoix2.Add(leTour.carteCommune[4]);
+
+            Console.WriteLine("quelle cartes voulez vous choisir ?");
+            Console.WriteLine();
+            for (int j = 0; j < mainChoix2.Count; j++)
+            {
+                afficherCarte(mainChoix2[j]);
+                Console.Write(" [" + j + "]");
+                Console.WriteLine("");
+            }
+            int choixCarte;
+            for (int i = 0; i < 5; i++)
+            {
+                Console.WriteLine("Choisir la carte #" + i);
+                choixCarte = SelectionDansMenu(1, 7);
+                mainFinale.Add(mainChoix2[choixCarte]);
+                mainChoix2.RemoveAt(choixCarte);
+            }
+            return mainFinale;
+
         }
         private void UpdaterGagnant(Joueur joueurUp)
         {
@@ -280,9 +316,9 @@ namespace JeuxPoker
         }
         private bool FinPartie()
         {
-            int idGagnant = getGagnant();
-            joueur[idGagnant].ajouterArgent(pot);
-            Console.WriteLine("Bravo Joueur " + idGagnant);
+            Joueur jG = getGagnant();
+            jG.ajouterArgent(pot);
+            Console.WriteLine("Bravo " + jG.nom);
             pot = 0;
             //remise a zéro des joueurs
             for (int i = 0; i < 4; i++)

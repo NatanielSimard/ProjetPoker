@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace JeuxPoker
     Trefle=2,
     Pique=3,
     }
-    enum nbCarte
+    public enum nbCarte
     {
      Deux=0,
      Trois=1,
@@ -52,7 +53,44 @@ namespace JeuxPoker
         {
 
         }
+        static public bool operator ==(Carte c1, Carte c2)
+        {
+            if (c1.lechiffre == c2.lechiffre)
+            {
+                return true;
+            }
+            else {return false;}
+        }
+        static public bool operator !=(Carte c1, Carte c2)
+        {
+            return !(c1 == c2);
+        }
+        static public bool operator <(Carte c1,Carte c2)
+        {
+            bool valide;
+            object ch;
+            int c1I, c2I;
+            valide=Enum.TryParse(typeof(nbCarte),c1.lechiffre, out ch);
+            c1I = Convert.ToInt32(ch);
 
+            valide = Enum.TryParse(typeof(nbCarte), c2.lechiffre, out ch);
+            c2I = Convert.ToInt32(ch);
+            return c1I < c2I;
 
+            //faire operation
+        }
+        static public bool operator >(Carte c1, Carte c2)
+        {
+            return !(c1 < c2);
+        }
+        public int Getvalue()
+        {
+            object ch;
+            int c2;
+            Enum.TryParse(typeof(nbCarte), lechiffre, out ch);
+            c2 = Convert.ToInt32(ch);
+            return c2;
+        }
+        
     }
 }
