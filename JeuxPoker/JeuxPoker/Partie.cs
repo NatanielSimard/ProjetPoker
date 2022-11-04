@@ -255,10 +255,36 @@ namespace JeuxPoker
         }
         public Joueur getGagnant()
         {
+            List<Int64> listResultat = new List<Int64>();
             for (int i = 0; i < 4; i++)
             {
                 joueur[i].maMain.mainFinale = MainFinale(joueur[i]);
             }
+            for (int j = 0; j < 4; j++)
+            {
+                if (joueur[j].actif)
+                {
+                    joueur[j].maMain.DeterminerForceMain();
+                    listResultat.Add(joueur[j].maMain.valeurMain);
+                }
+            }
+            Int64 resultatHaut;
+            listResultat.Sort();
+            resultatHaut = listResultat[listResultat.Count-1];
+            for (int i = 0; i < 4; i++)
+            {
+                if (joueur[i].actif)
+                {
+                    if (joueur[i].maMain.valeurMain==resultatHaut)
+                    {
+                        return joueur[i];
+
+                    }
+                }
+            }
+            return null;
+
+
             
         }
 
@@ -276,19 +302,21 @@ namespace JeuxPoker
 
             Console.WriteLine("quelle cartes voulez vous choisir ?");
             Console.WriteLine();
-            for (int j = 0; j < mainChoix2.Count; j++)
-            {
-                afficherCarte(mainChoix2[j]);
-                Console.Write(" [" + j + "]");
-                Console.WriteLine("");
-            }
+
             int choixCarte;
             for (int i = 0; i < 5; i++)
             {
-                Console.WriteLine("Choisir la carte #" + i);
+                for (int j = 0; j < mainChoix2.Count; j++)
+                {
+                    afficherCarte(mainChoix2[j]);
+                    Console.Write(" [" + (j+1) + "]");
+                    Console.WriteLine("");
+                }
+                Console.WriteLine("Choisir la carte #" + (i+1));
                 choixCarte = SelectionDansMenu(1, 7);
-                mainFinale.Add(mainChoix2[choixCarte]);
-                mainChoix2.RemoveAt(choixCarte);
+                mainFinale.Add(mainChoix2[choixCarte-1]);
+                mainChoix2.RemoveAt(choixCarte-1);
+                Console.Clear();
             }
             return mainFinale;
 

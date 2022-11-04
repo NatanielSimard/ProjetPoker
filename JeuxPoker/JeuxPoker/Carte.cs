@@ -53,36 +53,36 @@ namespace JeuxPoker
         {
 
         }
-        static public bool operator ==(Carte c1, Carte c2)
-        {
-            if (c1.lechiffre == c2.lechiffre)
-            {
-                return true;
-            }
-            else {return false;}
-        }
-        static public bool operator !=(Carte c1, Carte c2)
-        {
-            return !(c1 == c2);
-        }
-        static public bool operator <(Carte c1,Carte c2)
-        {
-            bool valide;
-            object ch;
-            int c1I, c2I;
-            valide=Enum.TryParse(typeof(nbCarte),c1.lechiffre, out ch);
-            c1I = Convert.ToInt32(ch);
+        //static public bool operator ==(Carte c1, Carte c2)
+        //{
+        //    if (c1.lechiffre == c2.lechiffre)
+        //    {
+        //        return true;
+        //    }
+        //    else {return false;}
+        //}
+        //static public bool operator !=(Carte c1, Carte c2)
+        //{
+        //    return !(c1 == c2);
+        //}
+        //static public bool operator <(Carte c1,Carte c2)
+        //{
+        //    bool valide;
+        //    object ch;
+        //    int c1I, c2I;
+        //    valide=Enum.TryParse(typeof(nbCarte),c1.lechiffre, out ch);
+        //    c1I = Convert.ToInt32(ch);
 
-            valide = Enum.TryParse(typeof(nbCarte), c2.lechiffre, out ch);
-            c2I = Convert.ToInt32(ch);
-            return c1I < c2I;
+        //    valide = Enum.TryParse(typeof(nbCarte), c2.lechiffre, out ch);
+        //    c2I = Convert.ToInt32(ch);
+        //    return c1I < c2I;
 
-            //faire operation
-        }
-        static public bool operator >(Carte c1, Carte c2)
-        {
-            return !(c1 < c2);
-        }
+        //    //faire operation
+        //}
+        //static public bool operator >(Carte c1, Carte c2)
+        //{
+        //    return !(c1 < c2);
+        //}
         public int Getvalue()
         {
             object ch;

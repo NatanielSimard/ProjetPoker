@@ -11,46 +11,46 @@ namespace JeuxPoker
     public class MainJoueur
     {
         public Carte[] cartes;
+        public Int64 valeurMain;
         public MainJoueur()
         {
             cartes = new Carte[2];
         }
+        public List<Carte> mainFinale = new List<Carte>();
 
-
-        static public Int64 DeterminerForceMain(List<Carte> c)
+        public Int64 DeterminerForceMain()
         {
             List<int> tabVal = new List<int>();
-            int c1 = c[0].Getvalue(), c2 = c[1].Getvalue(), c3 = c[2].Getvalue(), c4 = c[3].Getvalue(), c5 = c[4].Getvalue();
-            tabVal.Add(c1);
-            tabVal.Add(c2);
-            tabVal.Add(c3);
-            tabVal.Add(c4);
-            tabVal.Add(c5);
+            for (int i = 0; i < mainFinale.Count; i++)
+            {
+                tabVal.Add(mainFinale[i].Getvalue());
+            }
             tabVal.Sort();
+            int c1,c2,c3,c4,c5;
             c1=tabVal[0];
             c2 = tabVal[1];
             c3 = tabVal[2];
             c4 = tabVal[3];
             c5 = tabVal[4];
-            if (c[0].laCouleur == c[1].laCouleur && c[1].laCouleur == c[2].laCouleur && c[2].laCouleur == c[3].laCouleur && c[3].laCouleur == c[4].laCouleur)
+            if (mainFinale[0].laCouleur == mainFinale[1].laCouleur && mainFinale[1].laCouleur == mainFinale[2].laCouleur && mainFinale[2].laCouleur == mainFinale[3].laCouleur && mainFinale[3].laCouleur == mainFinale[4].laCouleur)
             {
                 if (c5 == c4 + 1 && c4 == c3 + 1 && c3 == c2 + 1 && c2 == c1 + 1)
                 {
                     if (c5 == 12)
                     {
                         //Quinte Flush Royale
-                        return 0x900000;
+                        valeurMain = 0x900000;
                     }
                     else
                     {
                         //Quinte Flush
-                        return 0x800000 + creationForce(c1, c2, c3, c4, c5);
+                        valeurMain =0x800000 + creationForce(c1, c2, c3, c4, c5);
                     }
                 }
                 //couleur
                 else
                 {
-                    return 0x500000 + creationForce(c1, c2, c3, c4, c5);
+                    valeurMain = 0x500000 + creationForce(c1, c2, c3, c4, c5);
                 }
             }
             else
@@ -66,19 +66,23 @@ namespace JeuxPoker
                         if (findTriple(c1,c2,c3,c4,c5,out valTriple,out valPair))
                         {
                             //full
-                            return 0x600000 + creationForce(valTriple, valTriple, valTriple, valPair, valPair);
+                            valeurMain = 0x600000 + creationForce(valTriple, valTriple, valTriple, valPair, valPair);
+                            
+
                         }
                         else
                         {
                             //double pair
-                            return 0x200000 + creationForce(valPair1, valPair1, valPair2, valPair2, rejet);
+                            valeurMain = 0x200000 + creationForce(valPair1, valPair1, valPair2, valPair2, rejet);
+                            
                         }
                     }
                     else
                     {
                         if (valPair1==valPair2)
                         {
-                            return 0x700000 + creationForce(valPair1, valPair1, valPair1, valPair1, rejet);
+                            valeurMain = 0x700000 + creationForce(valPair1, valPair1, valPair1, valPair1, rejet);
+                            
                         }
                         else
                         {
@@ -92,7 +96,8 @@ namespace JeuxPoker
                                         tabVal.RemoveAt(i);
                                     }
                                     tabVal.Sort();
-                                    return 0x300000 + creationForce(triple, triple, triple, tabVal[1], tabVal[0]);
+                                    valeurMain = 0x300000 + creationForce(triple, triple, triple, tabVal[1], tabVal[0]);
+                                    
                                 }
                             }
                             else
@@ -105,7 +110,8 @@ namespace JeuxPoker
                                         tabVal.RemoveAt(i);
                                     }
                                     tabVal.Sort();
-                                    return 0x100000 + creationForce(pair, pair, tabVal[2], tabVal[1], tabVal[0]);
+                                    valeurMain = 0x100000 + creationForce(pair, pair, tabVal[2], tabVal[1], tabVal[0]);
+                                    
                                 }
                             }
                         }
@@ -116,12 +122,13 @@ namespace JeuxPoker
                     if(c5 == c4 + 1 && c4 == c3 + 1 && c3 == c2 + 1 && c2 == c1 + 1)
                     {
                         //Quinte
-                        return 0x400000 + creationForce(c1, c2, c3, c4, c5);
+                        valeurMain = 0x400000 + creationForce(c1, c2, c3, c4, c5);
                     }
                     else
                     {
                         //Hauteur
-                        return 0x000000 + creationForce(c1,c2,c3,c4,c5);
+                        valeurMain = 0x000000 + creationForce(c1, c2, c3, c4, c5);
+                        
                     }
                 }
             }
@@ -129,9 +136,9 @@ namespace JeuxPoker
 
 
 
-            return 0;
+            return valeurMain;
         }
-        static private int DeciToHexa(int deci)
+        private int DeciToHexa(int deci)
         {
             int hexa=0x0;
             switch (deci)
@@ -182,13 +189,13 @@ namespace JeuxPoker
             return hexa;
             
         }
-        static private int creationForce(int c1, int c2, int c3, int c4, int c5)
+        private int creationForce(int c1, int c2, int c3, int c4, int c5)
         {
             int retour;
             retour = DeciToHexa(c5) * 0x10000 + DeciToHexa(c4) * 0x1000 + DeciToHexa(c3) * 0x100 + DeciToHexa(c2) * 0x10 + DeciToHexa(c1);
             return retour;
         }
-        static private bool FindPaire(int c1, int c2, int c3, int c4, int c5, out int pair1 , out int pair2, out int rejet)
+        private bool FindPaire(int c1, int c2, int c3, int c4, int c5, out int pair1 , out int pair2, out int rejet)
         {
             List<int> list = new List<int>();
             list.Add(c1);
@@ -224,8 +231,12 @@ namespace JeuxPoker
                     }
 
                 }
-                rejet = list[0];
-                list.RemoveAt(0);
+                if (list.Count !=0)
+                {
+                    rejet = list[0];
+                    list.RemoveAt(0);
+                }
+
 
                 
             }
@@ -238,7 +249,7 @@ namespace JeuxPoker
             return trouverPair;
 
         }
-        static private bool findTriple(int c1, int c2, int c3, int c4, int c5, out int triple,out int doubleValeur)
+        private bool findTriple(int c1, int c2, int c3, int c4, int c5, out int triple,out int doubleValeur)
         {
             FindPaire(c1, c2, c3, c4, c5, out int p1 ,out int p2,out int rej);
             List<int> list = new List<int>();
